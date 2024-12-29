@@ -59,6 +59,10 @@ spec:
         {{- toYaml $proxy.extraLabels.pod | nindent 8 }}
         {{- end }}
     spec:
+{{- if $proxy.dnsPolicy }}
+      dnsPolicy: {{ $proxy.dnsPolicy }}
+{{- end }}
+      hostNetwork: {{ $proxy.hostNetwork }}
 {{- if $proxy.nodeSelector }}
       nodeSelector: {{- toYaml $proxy.nodeSelector | nindent 8 }}
 {{- end }}
@@ -137,7 +141,7 @@ spec:
       {{- $_ := set $initContainer "resources" $proxy.resources }}
     {{- end }}
     {{- list $initContainer | toYaml | nindent 8 }}
-    {{- /* Note: this will break if the user sets volumeMounts to its initContainer */}}
+    {{- if not (hasKey $initContainer "volumeMounts") }}
           volumeMounts:
     {{- if or $proxy.highAvailability.certManager.enabled $proxy.tls.existingSecretName }}
           - mountPath: /etc/teleport-tls
@@ -149,6 +153,7 @@ spec:
             readOnly: true
           - mountPath: /var/lib/teleport
             name: "data"
+    {{- end }}
     {{- if $proxy.extraVolumeMounts }}
       {{- toYaml $proxy.extraVolumeMounts | nindent 10 }}
     {{- end }}
@@ -314,9 +319,15 @@ spec:
         secret:
           secretName: {{ $proxy.tls.existingCASecretName }}
 {{- end }}
+{{- if contains "name:config" (toString $proxy.extraVolumes) }}
+      - name: "config-configmap"
+        configMap:
+          name: {{ .Release.Name }}-proxy
+{{- else }}
       - name: "config"
         configMap:
           name: {{ .Release.Name }}-proxy
+{{- end }}
       - name: "data"
         emptyDir: {}
 {{- if $proxy.extraVolumes }}

@@ -1,4 +1,5 @@
 {{- $auth := mustMergeOverwrite (mustDeepCopy .Values) .Values.auth -}}
+{{- if gt (int $auth.highAvailability.replicaCount) 0 }}
 {{- if $auth.validateConfigOnDeploy }}
 apiVersion: batch/v1
 kind: Job
@@ -111,4 +112,5 @@ spec:
   {{- toYaml .Values.extraVolumes | nindent 6 }}
 {{- end }}
       serviceAccountName: {{ include "teleport-cluster.auth.hookServiceAccountName" . }}
+{{- end }}
 {{- end }}

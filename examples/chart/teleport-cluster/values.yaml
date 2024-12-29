@@ -801,3 +801,13 @@ probeTimeoutSeconds: 1
 #
 # This should be greater than 30 seconds as pods are waiting 30 seconds in a preStop hook.
 terminationGracePeriodSeconds: 60
+
+# Host networking requested for this pod. Use the host's network namespace. If this
+# option is set, the ports that will be used must be specified. Default to false.
+hostNetwork: false
+# Set DNS policy for the pod. Defaults to "ClusterFirst". Valid values are
+# 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'. DNS parameters given
+# in DNSConfig will be merged with the policy selected with DNSPolicy. To have DNS
+# options set along with hostNetwork, you have to specify DNS policy explicitly to
+# 'ClusterFirstWithHostNet'.
+dnsPolicy: ClusterFirst
