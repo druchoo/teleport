@@ -1,4 +1,5 @@
 {{- $auth := mustMergeOverwrite (mustDeepCopy .Values) .Values.auth -}}
+{{- if gt (int $auth.highAvailability.replicaCount) 0 }}
 {{- if $auth.validateConfigOnDeploy }}
 {{- $configTemplate := printf "teleport-cluster.auth.config.%s" $auth.chartMode -}}
 apiVersion: v1
@@ -32,4 +33,5 @@ data:
 {{- end }}
   teleport.yaml: |2
     {{- mustMergeOverwrite (include $configTemplate . | fromYaml) $auth.teleportConfig | toYaml | nindent 4 -}}
+{{- end }}
 {{- end }}
