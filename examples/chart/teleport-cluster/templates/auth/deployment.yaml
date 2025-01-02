@@ -1,4 +1,5 @@
 {{- $auth := mustMergeOverwrite (mustDeepCopy .Values) .Values.auth -}}
+{{- if gt (int $auth.highAvailability.replicaCount) 0 }}
 {{- $replicated := gt (int $auth.highAvailability.replicaCount) 1 -}}
 {{- $projectedServiceAccountToken := semverCompare ">=1.20.0-0" .Capabilities.KubeVersion.Version }}
 apiVersion: apps/v1
@@ -299,3 +300,4 @@ spec:
 {{- end }}
       serviceAccountName: {{ include "teleport-cluster.auth.serviceAccountName" . }}
       terminationGracePeriodSeconds: {{ $auth.terminationGracePeriodSeconds }}
+{{- end }}

@@ -69,7 +69,11 @@ teleport.dev/release: '{{ include "teleport-cluster.operator.namespacedRelease" 
         {{- fail "When joining using the Kubernetes JWKS join method, you must set the value `teleportClusterName`" -}}
     {{- end -}}
 {{- else -}}
-    {{- $clusterAddr | printf "%s:3025" -}}
+    {{- if .Values.teleportAddress -}}
+        {{- .Values.teleportAddress -}}
+    {{- else -}}
+        {{- $clusterAddr | printf "%s:3025" -}}
+    {{- end -}}
 {{- end -}}
 {{- end -}}
 
