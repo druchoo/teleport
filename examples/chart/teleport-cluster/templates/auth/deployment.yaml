@@ -155,7 +155,7 @@ spec:
         {{- if $auth.insecureSkipProxyTLSVerify }}
         - "--insecure"
         {{- end }}
-        {{- if $auth.createProxyToken }}
+        {{- if or $auth.createProxyToken .Values.operator.enabled }}
         - "--apply-on-startup=/etc/teleport/apply-on-startup.yaml"
         {{- end }}
         {{- if $auth.extraArgs }}
