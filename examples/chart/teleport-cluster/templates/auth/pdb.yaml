@@ -1,4 +1,5 @@
 {{- $auth := mustMergeOverwrite (mustDeepCopy .Values) .Values.auth -}}
+{{- if gt (int $auth.highAvailability.replicaCount) 0 }}
 {{- if $auth.highAvailability.podDisruptionBudget.enabled }}
 {{- if .Capabilities.APIVersions.Has "policy/v1" }}
 apiVersion: policy/v1
@@ -18,4 +19,5 @@ spec:
   minAvailable: {{ $auth.highAvailability.podDisruptionBudget.minAvailable }}
   selector:
     matchLabels: {{- include "teleport-cluster.auth.selectorLabels" . | nindent 6 }}
+{{- end }}
 {{- end }}

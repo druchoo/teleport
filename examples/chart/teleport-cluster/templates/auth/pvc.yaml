@@ -1,4 +1,5 @@
 {{- $auth := mustMergeOverwrite (mustDeepCopy .Values) .Values.auth -}}
+{{- if gt (int $auth.highAvailability.replicaCount) 0 }}
 {{- if $auth.persistence.enabled }}
   {{/* Disable persistence for cloud modes */}}
   {{- if and (not (eq $auth.chartMode "aws")) (not (eq $auth.chartMode "gcp")) (not (eq $auth.chartMode "azure")) }}
@@ -25,4 +26,5 @@ spec:
       storage: {{ required "persistence.volumeSize is required in chart values" $auth.persistence.volumeSize }}
     {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}
